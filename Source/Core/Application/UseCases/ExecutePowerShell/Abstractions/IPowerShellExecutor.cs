@@ -1,4 +1,4 @@
-﻿namespace Application.UseCases.ExecutePowerShell.Infrastructure;
+﻿namespace Application.UseCases.ExecutePowerShell.Abstractions;
 
 public interface IPowerShellExecutor
 {

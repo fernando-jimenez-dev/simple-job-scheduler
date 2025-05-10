@@ -11,5 +11,5 @@ public interface IScriptFileVerifier
     /// Verifies that the file path is indeed a PowerShell script path.
     /// Verification is done verifying the .ps1 extension only.
     /// </summary>
-    bool IsPowerShell(string scriptPath);
+    bool IsPowerShell(string path);
 }

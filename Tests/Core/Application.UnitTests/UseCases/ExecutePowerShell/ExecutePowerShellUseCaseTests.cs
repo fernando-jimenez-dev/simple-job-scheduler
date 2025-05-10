@@ -1,7 +1,6 @@
 ﻿using Application.UseCases.ExecutePowerShell;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
-using Application.UseCases.ExecutePowerShell.Infrastructure;
 using NSubstitute;
 using Shouldly;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;

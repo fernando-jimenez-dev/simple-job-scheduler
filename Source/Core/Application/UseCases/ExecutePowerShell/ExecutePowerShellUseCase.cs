@@ -1,6 +1,5 @@
 ﻿using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
-using Application.UseCases.ExecutePowerShell.Infrastructure;
 using FluentResults;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
