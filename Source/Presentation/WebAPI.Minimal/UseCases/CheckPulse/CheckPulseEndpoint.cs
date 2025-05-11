@@ -22,7 +22,7 @@ public class CheckPulseEndpoint
 
             return output.IsSuccess
                 ? HandleSuccess(logger)
-                : HandleError(output, logger);
+                : HandleError(output.Value, logger);
         }
         catch (Exception exception)
         {

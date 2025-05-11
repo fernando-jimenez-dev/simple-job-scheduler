@@ -4,6 +4,7 @@ using Application.UseCases.ExecutePowerShell.Errors;
 using NSubstitute;
 using Shouldly;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
+using static Application.UseCases.ExecutePowerShell.Abstractions.IPowerShellExecutor;
 
 namespace Application.UnitTests.UseCases.ExecutePowerShell;
 
