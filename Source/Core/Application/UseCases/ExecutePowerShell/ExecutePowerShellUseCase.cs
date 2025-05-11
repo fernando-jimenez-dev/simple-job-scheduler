@@ -27,32 +27,34 @@ public class ExecutePowerShellUseCase : IExecutePowerShellUseCase
         _scriptFileVerifier = scriptFileVerifier;
     }
 
+    /// <summary>
+    /// 1. Run validations <br/>
+    /// 2. Execute script <br/>
+    /// 3. Return execution result
+    /// </summary>
     public async Task<Result<ExecutePowerShellOutput>> Run(ExecutePowerShellInput input, CancellationToken cancellationToken = default)
     {
-        // 0. Validate Input
+        // 1. Run validations
         var validationResult = input.Validate();
         if (!validationResult.IsValid)
             return Result.Fail<ExecutePowerShellOutput>(new InvalidInputError(input, validationResult));
 
-        // 1. Validate Path
         if (!_scriptFileVerifier.Exists(input.ScriptPath))
             return Result.Fail<ExecutePowerShellOutput>(new FileNotFoundError(input));
 
-        // 2. Validate Extension
         if (!_scriptFileVerifier.IsPowerShell(input.ScriptPath))
             return Result.Fail<ExecutePowerShellOutput>(new FileIsNotPowerShellError(input));
 
-        // 3. Launch Execution
-        var executionOutput = await _powerShellExecutor.Execute(input.ScriptPath);
+        // 2. Execute Script
+        var executionOutput = await _powerShellExecutor.Execute(input.ScriptPath, cancellationToken);
 
-        // 4. Capture Execution Output
+        // 3. Return execution result
         var useCaseOutput = new ExecutePowerShellOutput(
             executionOutput.ExitCode,
             executionOutput.StdOut,
             executionOutput.StdErr
         );
 
-        // 5. Based on Status - Return a Success or Failure result, wrapping the output.
         if (useCaseOutput.ExitCode != 0)
             return Result.Fail<ExecutePowerShellOutput>(
                 new FailureExitCodeError(input, executionOutput.ExitCode, executionOutput.StdOut, executionOutput.StdErr)
