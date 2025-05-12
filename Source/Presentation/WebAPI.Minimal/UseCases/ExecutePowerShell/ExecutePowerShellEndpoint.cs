@@ -14,10 +14,13 @@ public class ExecutePowerShellEndpoint
     )
     {
         logger.LogInformation("We are alive!");
+        logger.LogInformation("Are we?!");
         var input = new ExecutePowerShellInput(request.ScriptPath);
         var result = await useCase.Run(input, cancellationToken);
+
         var response = new ExecutePowerShellResponse(result, request);
 
+        logger.LogInformation("That is what I was told...");
         return Results.Json(data: response, statusCode: response.StatusCode);
     }
 }

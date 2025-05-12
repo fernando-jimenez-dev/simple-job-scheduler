@@ -1,4 +1,5 @@
 using Serilog;
+using WebAPI.Minimal.Shared;
 using WebAPI.Minimal.StartUp;
 using WebAPI.Minimal.StartUp.Logging;
 
@@ -18,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureWebApiDependencies();
 
 var app = builder.Build();
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
