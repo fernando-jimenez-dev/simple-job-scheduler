@@ -1,7 +1,7 @@
-﻿using Application.Shared.Errors;
+﻿using FluentResults;
 
 namespace Application.UseCases.CheckPulse.Errors;
 
-public record EmptyVitalsError() : Error("No vitals were found.")
+public class EmptyVitalsError() : Error("No vitals were found.")
 {
 }

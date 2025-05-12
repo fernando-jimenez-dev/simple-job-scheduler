@@ -71,6 +71,6 @@ public class CheckPulseUseCase : ICheckPulseUseCase
     {
         var errorMessage = $"Unexpected error during Check Pulse use case. Input: '{input}'";
         logger.LogError(exception, errorMessage);
-        return new CheckPulseUseCaseOutput(new UnexpectedError(errorMessage, exception));
+        return new CheckPulseUseCaseOutput(new OldUnexpectedError(errorMessage, exception));
     }
 }
