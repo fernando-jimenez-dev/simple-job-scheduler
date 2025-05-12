@@ -41,3 +41,13 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+
+# SonarQube
+sonarqubecoverage
+.sonarqube/*
+
+# Testing
+LocalTests
+
+# Secrets
+secrets

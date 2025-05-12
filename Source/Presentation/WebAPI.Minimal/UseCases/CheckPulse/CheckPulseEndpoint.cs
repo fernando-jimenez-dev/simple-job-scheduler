@@ -22,7 +22,7 @@ public class CheckPulseEndpoint
 
             return output.IsSuccess
                 ? HandleSuccess(logger)
-                : HandleError(output, logger);
+                : HandleError(output.Value, logger);
         }
         catch (Exception exception)
         {
@@ -48,7 +48,7 @@ public class CheckPulseEndpoint
                 logger.LogWarning("Empty vitals: {}", emptyVitalsError.Message);
                 return CreateJsonResponse(new CheckPulseEndpointResponse(emptyVitalsError.Message), HttpStatusCode.InternalServerError);
 
-            case UnexpectedError unexpectedError:
+            case OldUnexpectedError unexpectedError:
                 logger.LogError("Pulse check failed with message {}", unexpectedError.Message);
                 return Results.StatusCode((int)HttpStatusCode.InternalServerError);
 

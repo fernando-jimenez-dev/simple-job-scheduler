@@ -1,4 +1,4 @@
-﻿using Application.Shared.Errors;
+﻿using FluentResults;
 
 namespace Application.UseCases.CheckPulse;
 
