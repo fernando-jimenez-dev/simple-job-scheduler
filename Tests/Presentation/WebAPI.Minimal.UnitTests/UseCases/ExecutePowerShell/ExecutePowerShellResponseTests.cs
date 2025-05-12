@@ -106,7 +106,7 @@ public class ExecutePowerShellResponseTests
     public void ShouldFailWithInternalServerError_WhenUnexpectedErrorTypeIsReturned()
     {
         var result = Result.Fail<ExecutePowerShellOutput>(
-            new ApplicationError("unknown", "Something bad")
+            new ApplicationError("UnexpectedError", "Something bad")
         );
         var request = new ExecutePowerShellRequest("some-input");
 
@@ -116,6 +116,24 @@ public class ExecutePowerShellResponseTests
         response.Data.ShouldBeNull();
         response.Error.ShouldNotBeNull();
         response.Error.Type.ShouldBe("UnexpectedError");
+        response.HttpStatusCode.ShouldBe(HttpStatusCode.InternalServerError);
+    }
+
+    [Fact]
+    public void ShouldFailWithInternalServerError_WhenUnknownErrorTypeIsReturned()
+    {
+        var result = Result.Fail<ExecutePowerShellOutput>(
+            new Error("This is not a known error")
+        );
+        var request = new ExecutePowerShellRequest("some-input");
+
+        var response = new ExecutePowerShellResponse(result, request);
+
+        response.IsSuccess.ShouldBeFalse();
+        response.Data.ShouldBeNull();
+        response.Error.ShouldNotBeNull();
+        response.Error.Type.ShouldBe("UnexpectedError");
+        response.Error.Message.ShouldBe("An unexpected and unknown error ocurred.");
         response.HttpStatusCode.ShouldBe(HttpStatusCode.InternalServerError);
     }
 }

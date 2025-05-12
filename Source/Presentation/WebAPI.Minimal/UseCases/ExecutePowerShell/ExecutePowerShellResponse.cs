@@ -82,7 +82,7 @@ public record ExecutePowerShellResponse
 
             _ => (
                 HttpStatusCode.InternalServerError,
-                ApiError.FromApplicationError(new UnexpectedError("An unexpected error ocurred."), request)
+                ApiError.FromApplicationError(new UnexpectedError("An unexpected and unknown error ocurred."), request)
             ),
         };
     }
