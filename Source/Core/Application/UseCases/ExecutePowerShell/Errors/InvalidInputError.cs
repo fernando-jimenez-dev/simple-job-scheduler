@@ -1,18 +1,19 @@
-﻿using FluentResults;
+﻿using Application.Shared.Errors;
 using FluentValidation.Results;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class InvalidInputError : Error
+public class InvalidInputError : ApplicationError
 {
-    public readonly ExecutePowerShellInput Input;
+    public ExecutePowerShellInput Input { get; }
+    public string ValidationMessage { get; }
 
-    public InvalidInputError(ExecutePowerShellInput input, ValidationResult validationResult) : base("Input is invalid")
+    public InvalidInputError
+        (ExecutePowerShellInput input, ValidationResult validationResult)
+        : base(nameof(InvalidInputError), "Input is invalid")
     {
         Input = input;
-
-        Metadata.Add("Guid", Guid.NewGuid());
-        Metadata.Add("Type", nameof(InvalidInputError));
+        ValidationMessage = validationResult.ToString();
     }
 }

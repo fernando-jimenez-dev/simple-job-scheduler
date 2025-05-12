@@ -1,18 +1,17 @@
-﻿using FluentResults;
+﻿using Application.Shared.Errors;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class FileIsNotPowerShellError : Error
+public class FileIsNotPowerShellError : ApplicationError
 {
-    public readonly ExecutePowerShellInput Input;
+    public ExecutePowerShellInput Input { get; }
 
-    public FileIsNotPowerShellError(ExecutePowerShellInput input)
-    : base($"File {input.ScriptPath} is not a PowerShell file.")
+    public FileIsNotPowerShellError(ExecutePowerShellInput input) : base(
+            nameof(FileIsNotPowerShellError),
+            $"File {input.ScriptPath} is not a PowerShell file."
+        )
     {
         Input = input;
-
-        Metadata.Add("Guid", Guid.NewGuid());
-        Metadata.Add("Type", nameof(FileIsNotPowerShellError));
     }
 }

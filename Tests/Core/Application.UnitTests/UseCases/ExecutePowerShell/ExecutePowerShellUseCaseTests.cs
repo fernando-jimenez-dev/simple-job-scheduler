@@ -1,7 +1,9 @@
-﻿using Application.UseCases.ExecutePowerShell;
+﻿using Application.Shared.Errors;
+using Application.UseCases.ExecutePowerShell;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IPowerShellExecutor;
@@ -35,15 +37,11 @@ public class ExecutePowerShellUseCaseTests
 
         result.IsSuccess.ShouldBeTrue();
         var output = result.Value.ShouldNotBeNull();
-        output.ScriptOutput.ShouldBe("All went well!");
+        output.StandardOutput.ShouldBe("All went well!");
         output.ExitCode.ShouldBe(0);
-        output.Error.ShouldBe("ERROR: Nothing too dramatic.");
+        output.StandardError.ShouldBe("ERROR: Nothing too dramatic.");
     }
 
-    /// <summary>
-    /// If the Exit Code is a Failure, we fail the entire use case execution.
-    /// In this case, a failure represents any ExitCode that is not zero (0).
-    /// </summary>
     [Fact]
     public async Task ShouldFail_WhenExitCodeIsAFailure()
     {
@@ -64,14 +62,15 @@ public class ExecutePowerShellUseCaseTests
         failureExitCodeError.ExitCode.ShouldBe(failingExitCode);
         failureExitCodeError.StandardOutput.ShouldBe("I was executing but...");
         failureExitCodeError.StandardError.ShouldBe("ERROR: Some description");
-        failureExitCodeError.Metadata["Guid"].ShouldNotBeNull();
-        failureExitCodeError.Metadata["Type"].ShouldBe(nameof(FailureExitCodeError));
+        failureExitCodeError.Id.ToString().ShouldNotBeNullOrEmpty();
+        failureExitCodeError.Type.ShouldBe(nameof(FailureExitCodeError));
     }
 
     [Fact]
     public async Task ShouldFail_WhenFileCannotBeFound()
     {
         var input = new ExecutePowerShellInput("//path//to//script.ps1");
+        _scriptFileVerifier.IsPowerShell(input.ScriptPath).Returns(true);
         _scriptFileVerifier.Exists(input.ScriptPath).Returns(false);
 
         var result = await _useCase.Run(input);
@@ -80,8 +79,8 @@ public class ExecutePowerShellUseCaseTests
         var error = result.Errors.First();
         var fileNotFoundError = error.ShouldBeOfType<FileNotFoundError>();
         fileNotFoundError.Input.ShouldBe(input);
-        fileNotFoundError.Metadata["Guid"].ShouldNotBeNull();
-        fileNotFoundError.Metadata["Type"].ShouldBe(nameof(FileNotFoundError));
+        fileNotFoundError.Id.ToString().ShouldNotBeNullOrEmpty();
+        fileNotFoundError.Type.ShouldBe(nameof(FileNotFoundError));
         await _powerShellExecutor.DidNotReceive().Execute(Arg.Any<string>());
     }
 
@@ -96,10 +95,10 @@ public class ExecutePowerShellUseCaseTests
 
         result.IsFailed.ShouldBeTrue();
         var error = result.Errors.First();
-        var fileNotFoundError = error.ShouldBeOfType<FileIsNotPowerShellError>();
-        fileNotFoundError.Input.ShouldBe(input);
-        fileNotFoundError.Metadata["Guid"].ShouldNotBeNull();
-        fileNotFoundError.Metadata["Type"].ShouldBe(nameof(FileIsNotPowerShellError));
+        var fileIsNotPsError = error.ShouldBeOfType<FileIsNotPowerShellError>();
+        fileIsNotPsError.Input.ShouldBe(input);
+        fileIsNotPsError.Id.ToString().ShouldNotBeNullOrEmpty();
+        fileIsNotPsError.Type.ShouldBe(nameof(FileIsNotPowerShellError));
         await _powerShellExecutor.DidNotReceive().Execute(Arg.Any<string>());
     }
 
@@ -115,10 +114,33 @@ public class ExecutePowerShellUseCaseTests
 
         result.IsFailed.ShouldBeTrue();
         var error = result.Errors.First();
-        var fileNotFoundError = error.ShouldBeOfType<InvalidInputError>();
-        fileNotFoundError.Input.ShouldBe(input);
-        fileNotFoundError.Metadata["Guid"].ShouldNotBeNull();
-        fileNotFoundError.Metadata["Type"].ShouldBe(nameof(InvalidInputError));
+        var invalidInputError = error.ShouldBeOfType<InvalidInputError>();
+        invalidInputError.Input.ShouldBe(input);
+        invalidInputError.Id.ToString().ShouldNotBeNullOrEmpty();
+        invalidInputError.Type.ShouldBe(nameof(InvalidInputError));
         await _powerShellExecutor.DidNotReceive().Execute(Arg.Any<string>());
+    }
+
+    [Fact]
+    public async Task ShouldFail_WhenUnexpectedExceptionIsThrown()
+    {
+        var input = new ExecutePowerShellInput("//path//to//script.ps1");
+        _scriptFileVerifier.Exists(input.ScriptPath).Returns(true);
+        _scriptFileVerifier.IsPowerShell(input.ScriptPath).Returns(true);
+
+        var exception = new InvalidOperationException("Something unexpected happened.");
+        _powerShellExecutor
+            .Execute(input.ScriptPath, Arg.Any<CancellationToken>())
+            .Throws(exception);
+
+        var result = await _useCase.Run(input);
+
+        result.IsFailed.ShouldBeTrue();
+        var error = result.Errors.First();
+        var unexpectedError = error.ShouldBeOfType<UnexpectedError>();
+        unexpectedError.Message.ShouldBe("An unexpected error ocurred while executing the PowerShell.");
+        unexpectedError.Exception.ShouldBe(exception);
+        unexpectedError.Id.ToString().ShouldNotBeNullOrEmpty();
+        unexpectedError.Type.ShouldBe(nameof(UnexpectedError));
     }
 }

@@ -1,18 +1,17 @@
-﻿using FluentResults;
+﻿using Application.Shared.Errors;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class FileNotFoundError : Error
+public class FileNotFoundError : ApplicationError
 {
-    public readonly ExecutePowerShellInput Input;
+    public ExecutePowerShellInput Input { get; }
 
-    public FileNotFoundError(ExecutePowerShellInput input)
-    : base($"PowerShell file {input.ScriptPath} could not be found.")
+    public FileNotFoundError(ExecutePowerShellInput input) : base(
+        nameof(FileNotFoundError),
+        $"PowerShell file {input.ScriptPath} could not be found."
+    )
     {
         Input = input;
-
-        Metadata.Add("Guid", Guid.NewGuid());
-        Metadata.Add("Type", nameof(FileNotFoundError));
     }
 }

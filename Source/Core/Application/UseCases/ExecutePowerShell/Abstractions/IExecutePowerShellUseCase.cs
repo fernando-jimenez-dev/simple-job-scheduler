@@ -24,7 +24,7 @@ public interface IExecutePowerShellUseCase : IUseCase
         }
     }
     /// <param name="ExitCode">PowerShell exit code.</param>
-    /// <param name="ScriptOutput">Powershell Standard Output (stdout).</param>
-    /// <param name="Error">Powershell Standard Error (stderr).</param>
-    public record ExecutePowerShellOutput(int ExitCode, string? ScriptOutput = null, string? Error = null);
+    /// <param name="StandardOutput">Powershell Standard Output (stdout).</param>
+    /// <param name="StandardError">Powershell Standard Error (stderr).</param>
+    public record ExecutePowerShellOutput(int ExitCode, string? StandardOutput = null, string? StandardError = null);
 }

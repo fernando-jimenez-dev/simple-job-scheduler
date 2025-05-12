@@ -1,3 +1,5 @@
-﻿namespace Application.Shared.Errors;
+﻿using FluentResults;
 
-public record ValidationError(string Message, string ValidatedObject) : Error(Message);
+namespace Application.Shared.Errors;
+
+public class ValidationError(string Message, string ValidatedObject) : Error(Message);

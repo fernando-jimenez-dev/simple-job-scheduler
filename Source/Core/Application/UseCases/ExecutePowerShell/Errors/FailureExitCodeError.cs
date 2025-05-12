@@ -1,14 +1,14 @@
-﻿using FluentResults;
+﻿using Application.Shared.Errors;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class FailureExitCodeError : Error
+public class FailureExitCodeError : ApplicationError
 {
-    public readonly ExecutePowerShellInput Input;
-    public readonly int ExitCode;
-    public readonly string? StandardOutput;
-    public readonly string? StandardError;
+    public ExecutePowerShellInput Input { get; }
+    public int ExitCode { get; }
+    public string? StandardOutput { get; }
+    public string? StandardError { get; }
 
     public FailureExitCodeError
     (
@@ -17,14 +17,14 @@ public class FailureExitCodeError : Error
         string? standardOutput = null,
         string? standardError = null
     )
-    : base($"PowerShell execution returned exit code '{exitCode}'.")
+    : base(
+        nameof(FailureExitCodeError),
+        $"PowerShell execution returned exit code '{exitCode}'."
+    )
     {
         Input = input;
         ExitCode = exitCode;
         StandardOutput = standardOutput;
         StandardError = standardError;
-
-        Metadata.Add("Guid", Guid.NewGuid());
-        Metadata.Add("Type", nameof(FailureExitCodeError));
     }
 }
