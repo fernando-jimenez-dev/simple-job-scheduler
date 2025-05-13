@@ -1,56 +1,18 @@
-# Simple Template
+# Simple Enterprise Scheduler
 
-This template serves as a foundation for projects following the **Clean Cut Architecture (CCA)** principles. It includes:
+Simple Enterprise Scheduler is an open-source application designed to execute and schedule automated jobs in a clear, maintainable, and developer-friendly way.
 
-1. A well-structure folder organization based on CCA.
-2. An example use case: **Check Pulse**, demonstrating the implementation of key architectural concepts.
+This project was born from the need to move away from bloated, overengineered schedulers and toward a solution that is straightforward, predictable, and easy to reason about. Whether you're running scripts on a server, orchestrating data processing tasks, or triggering infrastructure workflows, this scheduler aims to provide a focused experience built around one key principle: **run jobs well — no more, no less.**
 
-## Features
+This is not a library or a developer framework. It is a real application that can be hosted and extended to meet operational needs.
 
-- **Screaming Intent:** The folder structure highlights the purpose of each component, emphasizing clarity and intent.
-- **Cohesion and Isolation:** Components are tightly focused on their specific responsibilities and interact only where necessary.
-- **Extendable Template:** Easily adapt this template to fit your business needs and domain requirements.
-- **Intentional Error Design:** Error scenarios are designed as part of the use case logic.
+> ⚠️ **DISCLAIMER**
+> This is not a production-ready system — yet. I'm building it piece by piece when time permits, because I find the challenge interesting and the space worth improving. If you're exploring alternatives to overcomplicated schedulers, feel free to watch, fork, or contribute as it grows into something usable.
 
-## Example Use Case: Check Pulse
+Key traits:
 
-The `Check Pulse` use case showcases the core principles of CCA while serving as an optional health-check mechanism.
+- **Simplicity first**: Everything in this system is transparent and purpose-driven. If it’s not needed, it’s not there.
+- **Structured and observable**: Logging is first-class. Errors are traceable. Behavior is explainable.
+- **Architecture-aware**: While the system is powered by .NET and implements [Clean Cut Architecture](https://github.com/fernando-jimenez-dev/clean-cut-architecture), you don’t need to know any of that to use it effectively.
 
-- **Purpose:** Validates that the application is operational and running correctly.
-- **Input:** Accepts an optional string for testing purposes.
-- **Output:** Returns a success or failure result.
-- **Endpoint:** Exposed via `GET /check-pulse` for integration testing or operational monitoring.
-
-## How to Use
-
-**1. Understand the Template Structure:**
-Explore the folder organization to understand where use cases and other components reside, and how they come together.
-
-**2. Replace Example Use Case:**
-Replace `CheckPulseUseCase` with your own business-specific use cases, following the same design principles.
-
-**3. Implement Your Use Cases:**
-Add your business-specific logic while ensuring it adheres to the principles of cohesion and isolation.
-
-**4. Extend Infrastructure:**
-Customize the infrastructure layer to fit your project’s dependencies, databases, and external systems.
-
-## Optional: Using It as a dotnet Template
-
-Transform this project into a reusable .NET template to accelerate your development workflow:
-
-**1. Pack the template**
-Open your terminal and run:
-
-`dotnet new install CleanCutArchitectureTemplate -force`
-
-This will install the solution structure as a template for you to use from the dotnet CLI or the Wizard.
-
-**2. Use the template**
-Open your terminal on the location you want to start your new solution that uses CCA, and run (replace YourSolutionName with the actual name of your solution):
-
-`dotnet new cca -n <YourSolutionName>`
-
-You can also use the more verbose command:
-
-`dotnet new clean-cut-architecture -n <YourSolutionName>`
+Whether you’re a developer deploying jobs, an ops engineer looking for reliable execution, or a curious technologist evaluating alternatives to heavy tools — this scheduler was made to get out of your way and just work.
