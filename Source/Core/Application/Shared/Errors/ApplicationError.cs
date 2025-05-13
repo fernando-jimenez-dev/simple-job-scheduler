@@ -3,12 +3,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Shared.Errors;
 
-//public abstract class ApplicationError(string Message, string ErrorId, string ErrorType) : Error(Message)
-//{
-//    public string Id => Guid.NewGuid().ToString();
-//    public string Type => ErrorType;
-//}
-
 public class ApplicationError : Error, IError
 {
     public Guid Id { get; set; }
@@ -16,15 +10,19 @@ public class ApplicationError : Error, IError
     public Exception? Exception { get; set; }
 
     /// <summary>
-    /// All Errors will be logged at some point during the lifecycle of the application.
-    /// It is important to make them declare their severity level, as that would change the way
-    /// our monitor system acts on them.
+    /// All application errors are expected to be logged at some point during the request lifecycle.
+    /// To support meaningful observability and monitoring automation, each error declares its severity
+    /// via the <see cref="Severity" /> property.
+    /// <br/><br/>
     ///
-    /// ERROR means the error will be marked for Review.
-    /// WARNING doesn't get picked up automatically.
-    /// FATAL means the application is unresponsive if this is logged.
+    /// This severity determines how our monitoring system reacts to the error:
+    /// <br/> - <see cref="LogLevel.Error" />: Triggers automatic triage and ticket creation.
+    /// <br/> - <see cref="LogLevel.Warning" />: Logged for context but does not trigger action.
+    /// <br/> - <see cref="LogLevel.Critical" />: Indicates unrecoverable failure or system instability.
     ///
-    /// If your Error type is more of a Informational Error (Warning), then override Severity to Warning.
+    /// <br/><br/>
+    /// Override the <see cref="Severity" /> property in your error subtype if it represents a
+    /// non-critical issue (e.g., invalid input, resource not found, etc.).
     /// </summary>
     public virtual LogLevel Severity => LogLevel.Error;
 
