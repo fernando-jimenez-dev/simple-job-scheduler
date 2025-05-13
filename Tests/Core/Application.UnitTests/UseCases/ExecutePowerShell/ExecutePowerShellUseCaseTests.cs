@@ -2,6 +2,7 @@
 using Application.UseCases.ExecutePowerShell;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
@@ -15,12 +16,14 @@ public class ExecutePowerShellUseCaseTests
     private readonly ExecutePowerShellUseCase _useCase;
     private readonly IPowerShellExecutor _powerShellExecutor;
     private readonly IScriptFileVerifier _scriptFileVerifier;
+    private readonly ILogger<ExecutePowerShellUseCase> _logger;
 
     public ExecutePowerShellUseCaseTests()
     {
         _powerShellExecutor = Substitute.For<IPowerShellExecutor>();
         _scriptFileVerifier = Substitute.For<IScriptFileVerifier>();
-        _useCase = new ExecutePowerShellUseCase(_powerShellExecutor, _scriptFileVerifier);
+        _logger = Substitute.For<ILogger<ExecutePowerShellUseCase>>();
+        _useCase = new ExecutePowerShellUseCase(_powerShellExecutor, _scriptFileVerifier, _logger);
     }
 
     [Fact]

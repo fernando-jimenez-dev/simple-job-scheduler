@@ -1,4 +1,5 @@
 ﻿using Application.Shared.Errors;
+using Microsoft.Extensions.Logging;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
@@ -9,6 +10,8 @@ public class FailureExitCodeError : ApplicationError
     public int ExitCode { get; }
     public string? StandardOutput { get; }
     public string? StandardError { get; }
+
+    public override LogLevel Severity => LogLevel.Warning;
 
     public FailureExitCodeError
     (

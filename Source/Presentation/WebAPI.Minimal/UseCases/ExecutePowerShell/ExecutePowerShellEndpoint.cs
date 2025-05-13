@@ -13,14 +13,24 @@ public class ExecutePowerShellEndpoint
         CancellationToken cancellationToken
     )
     {
-        logger.LogInformation("We are alive!");
-        logger.LogInformation("Are we?!");
+        logger.LogInformation("Received a request to execute the PowerShell script at: {Path}", request.ScriptPath);
+
         var input = new ExecutePowerShellInput(request.ScriptPath);
         var result = await useCase.Run(input, cancellationToken);
 
         var response = new ExecutePowerShellResponse(result, request);
 
-        logger.LogInformation("That is what I was told...");
+        if (response.IsSuccess)
+            logger.LogInformation("PowerShell script executed successfully.");
+        else
+            logger.Log(
+                response.Error?.Severity ?? LogLevel.Error,
+                response.Error?.Exception,
+                "PowerShell script execution failed. Error: {Error}",
+                response.Error is null ? "ApiError object was null." : response.Error.ToString()
+            );
+
+        logger.LogInformation("Returning response with HTTP status code: {StatusCode} ({Name})", response.StatusCode, response.HttpStatusCode);
         return Results.Json(data: response, statusCode: response.StatusCode);
     }
 }
