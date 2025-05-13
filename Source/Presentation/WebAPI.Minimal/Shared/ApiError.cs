@@ -1,4 +1,6 @@
 ﻿using Application.Shared.Errors;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Minimal.Shared;
 
@@ -9,12 +11,20 @@ public record ApiError
     public string Message { get; init; }
     public Dictionary<string, object?> Details { get; init; }
 
+    [JsonIgnore]
+    public LogLevel Severity { get; init; }
+
+    [JsonIgnore]
+    public Exception? Exception { get; init; }
+
     private ApiError(ApplicationError error)
     {
         Id = error.Id;
         Type = error.Type;
         Message = error.Message;
         Details = [];
+        Exception = error.Exception;
+        Severity = error.Severity;
     }
 
     public static ApiError FromApplicationError<T>(ApplicationError error, T request)
@@ -36,4 +46,26 @@ public record ApiError
             return copy;
          */
     }
+
+    public override string ToString()
+    {
+        try
+        {
+            return JsonSerializer.Serialize(this, ApiErrorJsonSerializerOptions.Options);
+        }
+        catch (Exception ex)
+        {
+            return $"{{ \"SerializationFailure\": \"{ex.Message}\" }}";
+        }
+    }
+}
+
+public class ApiErrorJsonSerializerOptions
+{
+    public static JsonSerializerOptions Options => new()
+    {
+        WriteIndented = false,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
 }

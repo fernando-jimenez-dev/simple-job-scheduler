@@ -4,6 +4,7 @@ using Application.UseCases.ExecutePowerShell.Errors;
 using FluentResults;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Shouldly;
 using System.Net;
@@ -15,10 +16,12 @@ namespace WebAPI.Minimal.UnitTests.UseCases.ExecutePowerShell;
 public class ExecutePowerShellEndpointTests
 {
     private readonly IExecutePowerShellUseCase _useCase;
+    private readonly ILogger<ExecutePowerShellEndpoint> _logger;
 
     public ExecutePowerShellEndpointTests()
     {
         _useCase = Substitute.For<IExecutePowerShellUseCase>();
+        _logger = Substitute.For<ILogger<ExecutePowerShellEndpoint>>();
     }
 
     [Theory]
@@ -28,12 +31,10 @@ public class ExecutePowerShellEndpointTests
     )
     {
         var request = new ExecutePowerShellRequest("some-path");
-
-        var useCase = Substitute.For<IExecutePowerShellUseCase>();
-        useCase.Run(Arg.Any<ExecutePowerShellInput>(), Arg.Any<CancellationToken>())
+        _useCase.Run(Arg.Any<ExecutePowerShellInput>(), Arg.Any<CancellationToken>())
             .Returns(result);
 
-        var endpointResult = await ExecutePowerShellEndpoint.Execute(useCase, request, CancellationToken.None);
+        var endpointResult = await ExecutePowerShellEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
 
         var expectedResponse = new ExecutePowerShellResponse(result, request);
         var json = endpointResult.ShouldBeOfType<JsonHttpResult<ExecutePowerShellResponse>>();
@@ -49,11 +50,10 @@ public class ExecutePowerShellEndpointTests
         var unexpectedErrorResult = Result.Fail<ExecutePowerShellOutput>(
             new UnexpectedError("Something went wrong")
         );
-        var useCase = Substitute.For<IExecutePowerShellUseCase>();
-        useCase.Run(Arg.Any<ExecutePowerShellInput>(), Arg.Any<CancellationToken>())
+        _useCase.Run(Arg.Any<ExecutePowerShellInput>(), Arg.Any<CancellationToken>())
             .Returns(unexpectedErrorResult);
 
-        var endpointResult = await ExecutePowerShellEndpoint.Execute(useCase, request, CancellationToken.None);
+        var endpointResult = await ExecutePowerShellEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
 
         var json = endpointResult.ShouldBeOfType<JsonHttpResult<ExecutePowerShellResponse>>();
         json.StatusCode.ShouldBe((int)HttpStatusCode.InternalServerError);
