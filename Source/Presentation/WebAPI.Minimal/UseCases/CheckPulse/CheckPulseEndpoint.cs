@@ -41,7 +41,7 @@ public class CheckPulseEndpoint
     {
         switch (output.Error)
         {
-            case ValidationError validationError:
+            case OldValidationError validationError:
                 return CreateJsonResponse(new CheckPulseEndpointResponse(validationError.Message), HttpStatusCode.BadRequest);
 
             case EmptyVitalsError emptyVitalsError:

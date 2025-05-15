@@ -64,7 +64,7 @@ public class CheckPulseUseCase : ICheckPulseUseCase
     private CheckPulseUseCaseOutput ValidationErrorOutput(string message, string field)
     {
         logger.LogDebug("Validation error: {Message}", message);
-        return new CheckPulseUseCaseOutput(new ValidationError(message, field));
+        return new CheckPulseUseCaseOutput(new OldValidationError(message, field));
     }
 
     private CheckPulseUseCaseOutput UnexpectedErrorOutput(string input, Exception exception)
