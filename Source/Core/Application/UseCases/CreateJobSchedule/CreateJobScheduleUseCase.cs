@@ -1,5 +1,7 @@
-﻿using Application.Shared.Errors;
+﻿using Application.Shared;
+using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule.Abstractions;
+using Application.UseCases.CreateJobSchedule.Errors;
 using FluentResults;
 
 namespace Application.UseCases.CreateJobSchedule;
@@ -31,13 +33,24 @@ public class CreateJobScheduleUseCase : ICreateJobScheduleUseCase
         _repository = repository;
     }
 
-    public Task<Result<CreateJobScheduleOutput>> Run(CreateJobScheduleInput input, CancellationToken cancellationToken = default)
+    public async Task<Result<CreateJobScheduleOutput>> Run(CreateJobScheduleInput input, CancellationToken cancellationToken = default)
     {
-        // 2. Validate input
+        // 2.1 Validate input
         var validationResult = input.Validate();
-        if (!validationResult.IsValid) Fail(ValidationError.For(input, validationResult));
+        if (!validationResult.IsValid)
+            return Fail(ValidationError.For(input, validationResult));
 
-        throw new NotImplementedException();
+        // 2.2 Job Id is not registered.
+        if (!JobTypeRegistry.JobExists(input.JobId))
+            return Fail(JobDoesNotExistError.For(input.JobId));
+
+        // 3. Register schedule
+        var saveNewScheduleResult = await _repository.SaveNewSchedule(input, cancellationToken);
+        if (!saveNewScheduleResult.IsSuccess)
+            return Fail(FailedToSaveScheduleError.For(saveNewScheduleResult));
+
+        var newScheduleId = saveNewScheduleResult.Value;
+        return Result.Ok(new CreateJobScheduleOutput(newScheduleId));
     }
 
     private static Result<CreateJobScheduleOutput> Fail(ApplicationError error)
