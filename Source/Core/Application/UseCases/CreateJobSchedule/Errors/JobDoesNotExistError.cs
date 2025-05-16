@@ -8,9 +8,10 @@ public class JobDoesNotExistError : ApplicationError
     public Guid JobId { get; init; }
 
     public override LogLevel Severity => LogLevel.Warning;
+    public const string Name = nameof(JobDoesNotExistError);
 
     public JobDoesNotExistError(Guid jobId, Exception? exception = null)
-        : base(nameof(JobDoesNotExistError), $"Job with Id {jobId} does not exist.", exception)
+        : base(Name, $"Job with Id {jobId} does not exist.", exception)
     {
         JobId = jobId;
     }

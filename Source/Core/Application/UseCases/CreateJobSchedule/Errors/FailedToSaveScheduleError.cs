@@ -10,9 +10,11 @@ public class FailedToSaveScheduleError : ApplicationError
 
     public override LogLevel Severity => LogLevel.Error;
 
+    public const string Name = nameof(FailedToSaveScheduleError);
+
     public FailedToSaveScheduleError(Result<int> saveScheduleResult, Exception? exception = null)
         : base(
-            nameof(FailedToSaveScheduleError),
+            Name,
             "There was an error while scheduling the job.",
              exception
         )

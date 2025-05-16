@@ -17,9 +17,11 @@ public class ValidationError<TValue> : ApplicationError
     public IReadOnlyList<string> Issues { get; }
     public override LogLevel Severity => LogLevel.Warning;
 
+    public static string Name = BuildErrorType();
+
     // Primary constructor: accepts any issue list
     public ValidationError(TValue value, IEnumerable<string> issues)
-        : base(BuildErrorType(), $"Value of type {GetValueTypeName()} failed validation.")
+        : base(Name, $"Value of type {GetValueTypeName()} failed validation.")
     {
         Value = value;
         Issues = issues?.ToList() ?? [];
