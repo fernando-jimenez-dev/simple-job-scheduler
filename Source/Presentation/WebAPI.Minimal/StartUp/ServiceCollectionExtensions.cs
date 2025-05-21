@@ -1,6 +1,9 @@
 ﻿using Application.UseCases.CheckPulse;
 using Application.UseCases.CheckPulse.Abstractions;
 using Application.UseCases.CheckPulse.Infrastructure;
+using Application.UseCases.CreateJobSchedule;
+using Application.UseCases.CreateJobSchedule.Abstractions;
+using Application.UseCases.CreateJobSchedule.Infrastructure;
 using Application.UseCases.ExecutePowerShell;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Infrastructure;
@@ -24,6 +27,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddExecutePowerShellUseCase()
+            .AddCreateJobScheduleUseCase()
             ;
         //.AddCheckPulseUseCase()
     }
@@ -44,6 +48,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPowerShellExecutor, PowerShellExecutor>();
         services.AddScoped<IScriptFileVerifier, ScriptFileVerifier>();
         services.AddScoped<IFileSystem, FileSystem>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddCreateJobScheduleUseCase(this IServiceCollection services)
+    {
+        // Use Case
+        services.AddScoped<ICreateJobScheduleUseCase, CreateJobScheduleUseCase>();
+
+        // Infrastructure
+        services.AddScoped<ICreateJobScheduleRepository, CreateJobScheduleInMemoryRepository>();
 
         return services;
     }
