@@ -1,6 +1,6 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.ExecutePowerShell.Errors;
-using FluentResults;
+using OpenResult;
 using System.Net;
 using System.Text.Json.Serialization;
 using WebAPI.Minimal.Shared;
@@ -31,7 +31,7 @@ public record ExecutePowerShellResponse
         IsSuccess = false;
         Data = null;
 
-        var useCaseError = useCaseResult.Errors.First();
+        var useCaseError = useCaseResult.Error!.Root;
         (HttpStatusCode, Error) = MapErrorToHttp(useCaseError, request);
     }
 
@@ -42,7 +42,7 @@ public record ExecutePowerShellResponse
     /// I have to evaluate if it would be worth replacing FluentResults.Result with a custom ApplicationResult -
     /// making the contract less dependant on a third-party model, which I hate right now but whatever.
     /// </param>
-    private static (HttpStatusCode, ApiError) MapErrorToHttp(IError useCaseError, ExecutePowerShellRequest request)
+    private static (HttpStatusCode, ApiError) MapErrorToHttp(Error useCaseError, ExecutePowerShellRequest request)
     {
         return useCaseError switch
         {

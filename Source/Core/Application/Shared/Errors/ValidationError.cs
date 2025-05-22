@@ -11,7 +11,7 @@ namespace Application.Shared.Errors;
 /// It has a severity of <see cref="LogLevel.Warning"/> because validation is an expected error that requires follow-up from the consumer.
 /// </remarks>
 /// <typeparam name="TValue">C# Type that failed validation.</typeparam>
-public class ValidationError<TValue> : ApplicationError
+public record ValidationError<TValue> : ApplicationError
 {
     public TValue Value { get; }
     public IReadOnlyList<string> Issues { get; }

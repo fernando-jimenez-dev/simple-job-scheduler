@@ -1,7 +1,7 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.CheckPulse.Abstractions;
 using Application.UseCases.CheckPulse.Errors;
-using FluentResults;
+using OpenResult;
 using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.CheckPulse;

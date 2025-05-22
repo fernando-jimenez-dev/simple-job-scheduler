@@ -1,7 +1,7 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.ExecutePowerShell.Errors;
-using FluentResults;
 using FluentValidation.Results;
+using OpenResult;
 using Shouldly;
 using System.Net;
 using WebAPI.Minimal.UseCases.ExecutePowerShell;
@@ -15,7 +15,7 @@ public class ExecutePowerShellResponseTests
     public void ShouldSucceed_WhenUseCaseResultIsSuccessful()
     {
         var useCaseOutput = new ExecutePowerShellOutput(0, "Output", null);
-        var result = Result.Ok(useCaseOutput);
+        var result = Result.Success(useCaseOutput);
         var request = new ExecutePowerShellRequest("path");
 
         var response = new ExecutePowerShellResponse(result, request);
@@ -32,7 +32,7 @@ public class ExecutePowerShellResponseTests
     {
         var input = new ExecutePowerShellInput("bad-path");
         var error = new FailureExitCodeError(input, 1, "output", "stderr");
-        var result = Result.Fail<ExecutePowerShellOutput>(error);
+        var result = Result<ExecutePowerShellOutput>.Failure(error);
         var request = new ExecutePowerShellRequest(input.ScriptPath);
 
         var response = new ExecutePowerShellResponse(result, request);
@@ -52,7 +52,7 @@ public class ExecutePowerShellResponseTests
     {
         var input = new ExecutePowerShellInput("notfound");
         var error = new FileNotFoundError(input);
-        var result = Result.Fail<ExecutePowerShellOutput>(error);
+        var result = Result<ExecutePowerShellOutput>.Failure(error);
         var request = new ExecutePowerShellRequest(input.ScriptPath);
 
         var response = new ExecutePowerShellResponse(result, request);
@@ -69,7 +69,7 @@ public class ExecutePowerShellResponseTests
     {
         var input = new ExecutePowerShellInput("not-a-ps");
         var error = new FileIsNotPowerShellError(input);
-        var result = Result.Fail<ExecutePowerShellOutput>(error);
+        var result = Result<ExecutePowerShellOutput>.Failure(error);
         var request = new ExecutePowerShellRequest(input.ScriptPath);
 
         var response = new ExecutePowerShellResponse(result, request);
@@ -89,7 +89,7 @@ public class ExecutePowerShellResponseTests
             new ValidationFailure("property", "Invalid format")
         ]);
         var error = new InvalidInputError(input, validationResult);
-        var result = Result.Fail<ExecutePowerShellOutput>(error);
+        var result = Result<ExecutePowerShellOutput>.Failure(error);
         var request = new ExecutePowerShellRequest(input.ScriptPath);
 
         var response = new ExecutePowerShellResponse(result, request);
@@ -105,7 +105,7 @@ public class ExecutePowerShellResponseTests
     [Fact]
     public void ShouldFailWithInternalServerError_WhenUnexpectedErrorTypeIsReturned()
     {
-        var result = Result.Fail<ExecutePowerShellOutput>(
+        var result = Result<ExecutePowerShellOutput>.Failure(
             new ApplicationError("UnexpectedError", "Something bad")
         );
         var request = new ExecutePowerShellRequest("some-input");
@@ -122,7 +122,7 @@ public class ExecutePowerShellResponseTests
     [Fact]
     public void ShouldFailWithInternalServerError_WhenUnknownErrorTypeIsReturned()
     {
-        var result = Result.Fail<ExecutePowerShellOutput>(
+        var result = Result<ExecutePowerShellOutput>.Failure(
             new Error("This is not a known error")
         );
         var request = new ExecutePowerShellRequest("some-input");

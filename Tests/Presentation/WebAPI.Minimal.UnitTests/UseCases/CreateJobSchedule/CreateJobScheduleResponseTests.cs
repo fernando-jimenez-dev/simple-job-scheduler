@@ -1,8 +1,8 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule;
 using Application.UseCases.CreateJobSchedule.Errors;
-using FluentResults;
 using FluentValidation.Results;
+using OpenResult;
 using Shouldly;
 using System.Net;
 using WebAPI.Minimal.UseCases.CreateJobSchedule;
@@ -22,7 +22,7 @@ public class CreateJobScheduleResponseTests
     {
         // Arrange
         var useCaseOutput = new CreateJobScheduleOutput(JobScheduleId: 123);
-        var result = Result.Ok(useCaseOutput);
+        var result = Result.Success(useCaseOutput);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);
@@ -42,7 +42,7 @@ public class CreateJobScheduleResponseTests
         var validationError = new ValidationError<CreateJobScheduleInput>(input, new ValidationResult([
             new ValidationFailure("ScheduledAt", "ScheduledAt must be in the future")
         ]));
-        var result = Result.Fail<CreateJobScheduleOutput>(validationError);
+        var result = Result<CreateJobScheduleOutput>.Failure(validationError);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);
@@ -65,7 +65,7 @@ public class CreateJobScheduleResponseTests
         // Arrange
         var jobId = Guid.NewGuid();
         var error = new JobDoesNotExistError(jobId);
-        var result = Result.Fail<CreateJobScheduleOutput>(error);
+        var result = Result<CreateJobScheduleOutput>.Failure(error);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);
@@ -85,9 +85,9 @@ public class CreateJobScheduleResponseTests
     public void ShouldMapTo500InternalServerError_OnFailedToSaveScheduleError()
     {
         // Arrange
-        var saveResult = Result.Fail<int>("Database unavailable");
+        var saveResult = Result<int>.Failure(new Error("Database unavailable"));
         var error = new FailedToSaveScheduleError(saveResult);
-        var result = Result.Fail<CreateJobScheduleOutput>(error);
+        var result = Result<CreateJobScheduleOutput>.Failure(error);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);
@@ -108,7 +108,7 @@ public class CreateJobScheduleResponseTests
     {
         // Arrange
         var error = new ApplicationError("SomeError", "Some application-level error");
-        var result = Result.Fail<CreateJobScheduleOutput>(error);
+        var result = Result<CreateJobScheduleOutput>.Failure(error);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);
@@ -127,7 +127,7 @@ public class CreateJobScheduleResponseTests
     {
         // Arrange
         var unknownError = new Error("Unknown error");
-        var result = Result.Fail<CreateJobScheduleOutput>(unknownError);
+        var result = Result<CreateJobScheduleOutput>.Failure(unknownError);
 
         // Act
         var response = new CreateJobScheduleResponse(result, _request);

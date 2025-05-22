@@ -3,11 +3,11 @@ using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule;
 using Application.UseCases.CreateJobSchedule.Abstractions;
 using Application.UseCases.CreateJobSchedule.Errors;
-using FluentResults;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using OpenResult;
 using Shouldly;
 using System.Net;
 using WebAPI.Minimal.UseCases.CreateJobSchedule;
@@ -53,7 +53,7 @@ public class CreateJobScheduleEndpointTests
             Parameters: "{\"foo\":42}"
         );
 
-        var unknownErrorResult = Result.Fail<CreateJobScheduleOutput>(
+        var unknownErrorResult = Result<CreateJobScheduleOutput>.Failure(
             new Error("Unknown error")
         );
         _useCase.Run(Arg.Any<CreateJobScheduleInput>(), Arg.Any<CancellationToken>())
@@ -74,11 +74,11 @@ public class CreateJobScheduleEndpointTests
     {
         yield return new object[]
         {
-            Result.Ok(new CreateJobScheduleOutput(123))
+            Result.Success(new CreateJobScheduleOutput(123))
         };
         yield return new object[]
         {
-            Result.Fail<CreateJobScheduleOutput>(
+            Result<CreateJobScheduleOutput>.Failure(
                 new ValidationError<CreateJobScheduleInput>(
                     new CreateJobScheduleInput(new OneTimeSchedule(DateTimeOffset.MinValue), Guid.NewGuid(), null),
                     new ValidationResult([new ValidationFailure("ScheduledAt", "ScheduledAt must be in the future")])
@@ -87,19 +87,19 @@ public class CreateJobScheduleEndpointTests
         };
         yield return new object[]
         {
-            Result.Fail<CreateJobScheduleOutput>(
+            Result<CreateJobScheduleOutput>.Failure(
                 new JobDoesNotExistError(Guid.NewGuid())
             )
         };
         yield return new object[]
         {
-            Result.Fail<CreateJobScheduleOutput>(
-                new FailedToSaveScheduleError(Result.Fail<int>("Database unavailable"))
+            Result <CreateJobScheduleOutput>.Failure(
+                new FailedToSaveScheduleError(Result<int>.Failure(new Error("Database unavailable")))
             )
         };
         yield return new object[]
         {
-            Result.Fail<CreateJobScheduleOutput>(
+            Result <CreateJobScheduleOutput>.Failure(
                 new ApplicationError("SomeError", "Some application-level error")
             )
         };

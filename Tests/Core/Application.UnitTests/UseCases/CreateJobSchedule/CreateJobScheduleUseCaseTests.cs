@@ -3,8 +3,8 @@ using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule;
 using Application.UseCases.CreateJobSchedule.Abstractions;
 using Application.UseCases.CreateJobSchedule.Errors;
-using FluentResults;
 using NSubstitute;
+using OpenResult;
 using Shouldly;
 
 namespace Application.UnitTests.UseCases.CreateJobSchedule;
@@ -31,7 +31,7 @@ public class CreateJobScheduleUseCaseTests
         const int createdScheduleId = 777;
         _repository
             .SaveNewSchedule(input, Arg.Any<CancellationToken>())
-            .Returns(Result.Ok(createdScheduleId));
+            .Returns(Result.Success(createdScheduleId));
 
         // Act
         var result = await _useCase.Run(input);
@@ -53,8 +53,8 @@ public class CreateJobScheduleUseCaseTests
         var result = await _useCase.Run(input);
 
         // Assert
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var validationError = error.ShouldBeOfType<ValidationError<CreateJobScheduleInput>>();
         validationError.Value.ShouldBe(input);
         validationError.Issues.ShouldContain(x => x.Contains("ScheduledAt must be in the future"));
@@ -75,8 +75,8 @@ public class CreateJobScheduleUseCaseTests
         var result = await _useCase.Run(input);
 
         // Assert
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var jobDoesNotExistError = error.ShouldBeOfType<JobDoesNotExistError>();
         jobDoesNotExistError.JobId.ShouldBe(unknownJobId);
         jobDoesNotExistError.Id.ToString().ShouldNotBeNullOrEmpty();
@@ -93,17 +93,17 @@ public class CreateJobScheduleUseCaseTests
 
         _repository
             .SaveNewSchedule(input, Arg.Any<CancellationToken>())
-            .Returns(Result.Fail<int>("Database is down"));
+            .Returns(Result<int>.Failure(new Error("Database is down")));
 
         // Act
         var result = await _useCase.Run(input);
 
         // Assert
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var failedToSaveError = error.ShouldBeOfType<FailedToSaveScheduleError>();
         failedToSaveError.SaveScheduleResult.IsSuccess.ShouldBeFalse();
-        failedToSaveError.SaveScheduleResult.Errors.ShouldNotBeEmpty();
+        failedToSaveError.SaveScheduleResult.Error.ShouldNotBeNull();
         failedToSaveError.Id.ToString().ShouldNotBeNullOrEmpty();
         failedToSaveError.Type.ShouldBe(nameof(FailedToSaveScheduleError));
     }
@@ -119,8 +119,8 @@ public class CreateJobScheduleUseCaseTests
         var result = await _useCase.Run(input);
 
         // Assert
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var validationError = error.ShouldBeOfType<ValidationError<CreateJobScheduleInput>>();
         validationError.Value.ShouldBe(input);
         validationError.Issues.ShouldContain(x => x.Contains("Parameters must be a valid JSON string"));

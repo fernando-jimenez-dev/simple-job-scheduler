@@ -2,7 +2,7 @@
 using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule.Abstractions;
 using Application.UseCases.CreateJobSchedule.Errors;
-using FluentResults;
+using OpenResult;
 
 namespace Application.UseCases.CreateJobSchedule;
 
@@ -50,9 +50,9 @@ public class CreateJobScheduleUseCase : ICreateJobScheduleUseCase
             return Fail(FailedToSaveScheduleError.For(saveNewScheduleResult));
 
         var newScheduleId = saveNewScheduleResult.Value;
-        return Result.Ok(new CreateJobScheduleOutput(newScheduleId));
+        return Result.Success(new CreateJobScheduleOutput(newScheduleId));
     }
 
     private static Result<CreateJobScheduleOutput> Fail(ApplicationError error)
-        => Result.Fail<CreateJobScheduleOutput>(error);
+        => Result<CreateJobScheduleOutput>.Failure(error);
 }

@@ -1,11 +1,11 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
-using FluentResults;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using OpenResult;
 using Shouldly;
 using System.Net;
 using WebAPI.Minimal.UseCases.ExecutePowerShell;
@@ -47,7 +47,7 @@ public class ExecutePowerShellEndpointTests
     {
         var request = new ExecutePowerShellRequest("some-path");
 
-        var unexpectedErrorResult = Result.Fail<ExecutePowerShellOutput>(
+        var unexpectedErrorResult = Result<ExecutePowerShellOutput>.Failure(
             new UnexpectedError("Something went wrong")
         );
         _useCase.Run(Arg.Any<ExecutePowerShellInput>(), Arg.Any<CancellationToken>())
@@ -68,26 +68,26 @@ public class ExecutePowerShellEndpointTests
     {
         yield return new object[]
         {
-        Result.Ok(new ExecutePowerShellOutput(0, "Everything fine", ""))
+        Result.Success(new ExecutePowerShellOutput(0, "Everything fine", ""))
         };
 
         yield return new object[]
         {
-        Result.Fail<ExecutePowerShellOutput>(
+        Result<ExecutePowerShellOutput>.Failure(
             new FileNotFoundError(new("missing.ps1"))
         )
         };
 
         yield return new object[]
         {
-        Result.Fail<ExecutePowerShellOutput>(
+        Result<ExecutePowerShellOutput>.Failure(
             new FileIsNotPowerShellError(new("invalid.txt"))
         )
         };
 
         yield return new object[]
         {
-        Result.Fail<ExecutePowerShellOutput>(
+        Result<ExecutePowerShellOutput>.Failure(
             new InvalidInputError(new(""), new ValidationResult([
                 new ValidationFailure("property", "invalid value")
             ]))
@@ -96,7 +96,7 @@ public class ExecutePowerShellEndpointTests
 
         yield return new object[]
         {
-        Result.Fail<ExecutePowerShellOutput>(
+        Result<ExecutePowerShellOutput>.Failure(
             new FailureExitCodeError(new("fail.ps1"), 1, "bad output", "stderr info")
         )
         };

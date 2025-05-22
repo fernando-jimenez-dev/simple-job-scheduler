@@ -4,7 +4,7 @@ using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerSh
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class FileIsNotPowerShellError : ApplicationError
+public record FileIsNotPowerShellError : ApplicationError
 {
     public ExecutePowerShellInput Input { get; }
     public override LogLevel Severity => LogLevel.Warning;

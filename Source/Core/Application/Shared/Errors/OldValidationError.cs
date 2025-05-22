@@ -1,5 +1,5 @@
-﻿using FluentResults;
+﻿using OpenResult;
 
 namespace Application.Shared.Errors;
 
-public class OldValidationError(string Message, string ValidatedObject) : Error(Message);
+public record OldValidationError(string Message, string ValidatedObject) : Error(Message);

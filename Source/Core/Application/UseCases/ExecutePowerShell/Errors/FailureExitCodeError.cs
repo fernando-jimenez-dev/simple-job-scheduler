@@ -4,7 +4,7 @@ using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerSh
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class FailureExitCodeError : ApplicationError
+public record FailureExitCodeError : ApplicationError
 {
     public ExecutePowerShellInput Input { get; }
     public int ExitCode { get; }

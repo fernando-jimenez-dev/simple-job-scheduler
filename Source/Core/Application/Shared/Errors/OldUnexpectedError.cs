@@ -1,11 +1,10 @@
-﻿using FluentResults;
-using Microsoft.Extensions.Logging;
+﻿using OpenResult;
 
 namespace Application.Shared.Errors;
 
-public class OldUnexpectedError(string Message, Exception Exception) : Error(Message);
+public record OldUnexpectedError(string Message, Exception Exception) : Error(Message, Exception: Exception);
 
-public class UnexpectedError : ApplicationError
+public record UnexpectedError : ApplicationError
 {
     public UnexpectedError(string message, Exception? exception = null) : base(nameof(UnexpectedError), message, exception)
     {

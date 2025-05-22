@@ -1,13 +1,12 @@
-﻿using FluentResults;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using OpenResult;
 
 namespace Application.Shared.Errors;
 
-public class ApplicationError : Error, IError
+public record ApplicationError : Error
 {
     public Guid Id { get; set; }
     public string Type { get; set; }
-    public Exception? Exception { get; set; }
 
     /// <summary>
     /// All application errors are expected to be logged at some point during the request lifecycle.
@@ -28,6 +27,7 @@ public class ApplicationError : Error, IError
 
     public ApplicationError(string type, string message, Exception? exception = null) : base(message)
     {
+        // ToDo: Update to .NET 9 and use new Guid v7.
         Id = Guid.NewGuid();
         Type = type;
         Exception = exception;

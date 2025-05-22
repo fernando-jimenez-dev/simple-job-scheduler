@@ -1,5 +1,5 @@
 ﻿using Application.UseCases.CreateJobSchedule.Abstractions;
-using FluentResults;
+using OpenResult;
 
 namespace Application.UseCases.CreateJobSchedule.Infrastructure;
 
@@ -18,7 +18,7 @@ public class CreateJobScheduleInMemoryRepository : ICreateJobScheduleRepository
                     input.JobId,
                     input.Parameters
             ));
-            return Task.FromResult(Result.Ok(1));
+            return Task.FromResult(Result.Success(1));
         }
         else
         {
@@ -30,7 +30,7 @@ public class CreateJobScheduleInMemoryRepository : ICreateJobScheduleRepository
                     input.Parameters
             );
             Schedules.Add(newSchedule);
-            return Task.FromResult(Result.Ok(newSchedule.Id));
+            return Task.FromResult(Result.Success(newSchedule.Id));
         }
     }
 }
