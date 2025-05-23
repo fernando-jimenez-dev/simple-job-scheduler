@@ -27,7 +27,6 @@ public record ApplicationError : Error
 
     public ApplicationError(string type, string message, Exception? exception = null) : base(message)
     {
-        // ToDo: Update to .NET 9 and use new Guid v7.
         Id = Guid.NewGuid();
         Type = type;
         Exception = exception;
