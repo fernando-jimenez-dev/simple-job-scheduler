@@ -5,7 +5,7 @@ using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerSh
 
 namespace Application.UseCases.ExecutePowerShell.Errors;
 
-public class InvalidInputError : ApplicationError
+public record InvalidInputError : ApplicationError
 {
     public ExecutePowerShellInput Input { get; }
     public string ValidationMessage { get; }

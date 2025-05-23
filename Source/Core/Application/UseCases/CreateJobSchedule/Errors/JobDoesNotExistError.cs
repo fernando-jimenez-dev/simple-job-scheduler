@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.UseCases.CreateJobSchedule.Errors;
 
-public class JobDoesNotExistError : ApplicationError
+public record JobDoesNotExistError : ApplicationError
 {
     public Guid JobId { get; init; }
 

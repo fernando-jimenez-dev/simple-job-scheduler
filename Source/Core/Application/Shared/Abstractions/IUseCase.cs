@@ -1,4 +1,4 @@
-﻿using FluentResults;
+﻿using OpenResult;
 
 namespace Application.Shared.Abstractions.UseCase
 {

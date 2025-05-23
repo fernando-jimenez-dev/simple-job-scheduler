@@ -1,10 +1,10 @@
 ﻿using Application.Shared.Errors;
-using FluentResults;
 using Microsoft.Extensions.Logging;
+using OpenResult;
 
 namespace Application.UseCases.CreateJobSchedule.Errors;
 
-public class FailedToSaveScheduleError : ApplicationError
+public record FailedToSaveScheduleError : ApplicationError
 {
     public Result<int> SaveScheduleResult { get; init; }
 

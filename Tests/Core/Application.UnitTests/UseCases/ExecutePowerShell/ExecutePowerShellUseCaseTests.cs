@@ -58,8 +58,8 @@ public class ExecutePowerShellUseCaseTests
 
         var result = await _useCase.Run(input);
 
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var failureExitCodeError = error.ShouldBeOfType<FailureExitCodeError>();
         failureExitCodeError.Input.ShouldBe(input);
         failureExitCodeError.ExitCode.ShouldBe(failingExitCode);
@@ -78,8 +78,8 @@ public class ExecutePowerShellUseCaseTests
 
         var result = await _useCase.Run(input);
 
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var fileNotFoundError = error.ShouldBeOfType<FileNotFoundError>();
         fileNotFoundError.Input.ShouldBe(input);
         fileNotFoundError.Id.ToString().ShouldNotBeNullOrEmpty();
@@ -96,8 +96,8 @@ public class ExecutePowerShellUseCaseTests
 
         var result = await _useCase.Run(input);
 
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var fileIsNotPsError = error.ShouldBeOfType<FileIsNotPowerShellError>();
         fileIsNotPsError.Input.ShouldBe(input);
         fileIsNotPsError.Id.ToString().ShouldNotBeNullOrEmpty();
@@ -115,8 +115,8 @@ public class ExecutePowerShellUseCaseTests
 
         var result = await _useCase.Run(input);
 
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var invalidInputError = error.ShouldBeOfType<InvalidInputError>();
         invalidInputError.Input.ShouldBe(input);
         invalidInputError.Id.ToString().ShouldNotBeNullOrEmpty();
@@ -138,8 +138,8 @@ public class ExecutePowerShellUseCaseTests
 
         var result = await _useCase.Run(input);
 
-        result.IsFailed.ShouldBeTrue();
-        var error = result.Errors.First();
+        result.IsFailure.ShouldBeTrue();
+        var error = result.Error.ShouldNotBeNull().Root;
         var unexpectedError = error.ShouldBeOfType<UnexpectedError>();
         unexpectedError.Message.ShouldBe("An unexpected error ocurred while executing the PowerShell.");
         unexpectedError.Exception.ShouldBe(exception);

@@ -1,8 +1,8 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Errors;
-using FluentResults;
 using Microsoft.Extensions.Logging;
+using OpenResult;
 using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.UseCases.ExecutePowerShell;
@@ -50,15 +50,15 @@ public class ExecutePowerShellUseCase : IExecutePowerShellUseCase
             _logger.LogDebug("Validating property constraints.");
             var validationResult = input.Validate();
             if (!validationResult.IsValid)
-                return Result.Fail<ExecutePowerShellOutput>(new InvalidInputError(input, validationResult));
+                return Fail(new InvalidInputError(input, validationResult));
 
             _logger.LogDebug("Verifying file is a PowerShell script.");
             if (!_scriptFileVerifier.IsPowerShell(input.ScriptPath))
-                return Result.Fail<ExecutePowerShellOutput>(new FileIsNotPowerShellError(input));
+                return Fail(new FileIsNotPowerShellError(input));
 
             _logger.LogDebug("Checking if the script file exists.");
             if (!_scriptFileVerifier.Exists(input.ScriptPath))
-                return Result.Fail<ExecutePowerShellOutput>(new FileNotFoundError(input));
+                return Fail(new FileNotFoundError(input));
 
             // 2. Execute Script
             _logger.LogInformation("Executing PowerShell script: {Path}", input.ScriptPath);
@@ -78,19 +78,21 @@ public class ExecutePowerShellUseCase : IExecutePowerShellUseCase
                     useCaseOutput.ExitCode,
                     useCaseOutput.StandardError
                 );
-                return Result.Fail<ExecutePowerShellOutput>(
+                return Fail(
                     new FailureExitCodeError(input, executionOutput.ExitCode, executionOutput.StdOut, executionOutput.StdErr)
                 );
             }
 
             _logger.LogInformation("Script completed successfully with exit code 0.");
-            return Result.Ok(useCaseOutput);
+            return Result.Success(useCaseOutput);
         }
         catch (Exception exception)
         {
             var unexpectedError = new UnexpectedError("An unexpected error ocurred while executing the PowerShell.", exception);
             _logger.LogCritical(exception, "{Message}", unexpectedError.Message);
-            return Result.Fail<ExecutePowerShellOutput>(unexpectedError);
+            return Fail(unexpectedError);
         }
     }
+
+    private static Result<ExecutePowerShellOutput> Fail(ApplicationError error) => Result<ExecutePowerShellOutput>.Failure(error);
 }

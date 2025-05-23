@@ -1,7 +1,7 @@
 ﻿using Application.Shared.Errors;
 using Application.UseCases.CreateJobSchedule;
 using Application.UseCases.CreateJobSchedule.Errors;
-using FluentResults;
+using OpenResult;
 using System.Net;
 using WebAPI.Minimal.Shared;
 
@@ -33,11 +33,11 @@ public record CreateJobScheduleResponse
         IsSuccess = false;
         Data = null;
 
-        var useCaseError = useCaseResult.Errors.First();
+        var useCaseError = useCaseResult.Error!.Root;
         (HttpStatusCode, Error) = MapErrorToHttp(useCaseError, request);
     }
 
-    private static (HttpStatusCode, ApiError) MapErrorToHttp(IError useCaseError, CreateJobScheduleRequest request)
+    private static (HttpStatusCode, ApiError) MapErrorToHttp(Error useCaseError, CreateJobScheduleRequest request)
     {
         return useCaseError switch
         {
@@ -57,7 +57,7 @@ public record CreateJobScheduleResponse
                     .FromApplicationError(error, request)
                     .WithDetail(
                         "repositoryError",
-                        error.SaveScheduleResult.Errors.FirstOrDefault()?.Message ?? "Unknown repository error"
+                        error.SaveScheduleResult.Error?.Root.Message ?? "Unknown repository error"
                     )
             ),
             ApplicationError unknown => (
