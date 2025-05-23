@@ -1,13 +1,13 @@
-﻿using Application.UseCases.CreateJobSchedule.Abstractions;
+﻿using Application.UseCases.ScheduleJob.Abstractions;
 using OpenResult;
 
-namespace Application.UseCases.CreateJobSchedule.Infrastructure;
+namespace Application.UseCases.ScheduleJob.Infrastructure;
 
-public class CreateJobScheduleInMemoryRepository : ICreateJobScheduleRepository
+public class ScheduleJobInMemoryRepository : IScheduleJobRepository
 {
     private List<JobSchedule> Schedules = [];
 
-    public Task<Result<int>> SaveNewSchedule(CreateJobScheduleInput input, CancellationToken cancellationToken = default)
+    public Task<Result<int>> SaveNewSchedule(ScheduleJobInput input, CancellationToken cancellationToken = default)
     {
         if (Schedules.Count == 0)
         {

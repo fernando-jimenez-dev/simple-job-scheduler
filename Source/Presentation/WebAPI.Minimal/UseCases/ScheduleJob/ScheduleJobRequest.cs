@@ -1,14 +1,14 @@
-﻿using Application.UseCases.CreateJobSchedule;
-using static WebAPI.Minimal.UseCases.CreateJobSchedule.RequestSchedule;
+﻿using Application.UseCases.ScheduleJob;
+using static WebAPI.Minimal.UseCases.ScheduleJob.RequestSchedule;
 
-namespace WebAPI.Minimal.UseCases.CreateJobSchedule;
+namespace WebAPI.Minimal.UseCases.ScheduleJob;
 
-public record CreateJobScheduleRequest(Guid JobId, RequestSchedule Schedule, string? Parameters = null)
+public record ScheduleJobRequest(Guid JobId, RequestSchedule Schedule, string? Parameters = null)
 {
-    public CreateJobScheduleInput ToInputOrDefault()
+    public ScheduleJobInput ToInputOrDefault()
     {
         var schedule = Schedule.ToDomainOrDefault();
-        return new CreateJobScheduleInput(schedule, JobId, Parameters);
+        return new ScheduleJobInput(schedule, JobId, Parameters);
     }
 }
 

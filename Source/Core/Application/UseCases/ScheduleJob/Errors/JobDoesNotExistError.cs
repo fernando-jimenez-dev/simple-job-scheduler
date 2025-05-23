@@ -1,7 +1,7 @@
 ﻿using Application.Shared.Errors;
 using Microsoft.Extensions.Logging;
 
-namespace Application.UseCases.CreateJobSchedule.Errors;
+namespace Application.UseCases.ScheduleJob.Errors;
 
 public record JobDoesNotExistError : ApplicationError
 {

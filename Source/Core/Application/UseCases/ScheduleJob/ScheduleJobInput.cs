@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace Application.UseCases.CreateJobSchedule;
+namespace Application.UseCases.ScheduleJob;
 
 /// <param name="Schedule">Time in the future for the job to be executed.</param>
 /// <param name="JobId">Job type to be executed.</param>
 /// <param name="Parameters">Parameters for the job to use during execution as JSON.</param>
-public record CreateJobScheduleInput(Schedule Schedule, Guid JobId, string? Parameters = null)
+public record ScheduleJobInput(Schedule Schedule, Guid JobId, string? Parameters = null)
 {
     public ValidationResult Validate() => new Validator().Validate(this);
-    public class Validator : AbstractValidator<CreateJobScheduleInput>
+    public class Validator : AbstractValidator<ScheduleJobInput>
     {
         public Validator()
         {

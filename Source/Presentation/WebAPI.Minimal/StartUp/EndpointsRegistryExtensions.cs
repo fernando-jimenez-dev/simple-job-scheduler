@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using WebAPI.Minimal.Shared;
-using WebAPI.Minimal.UseCases.CreateJobSchedule;
 using WebAPI.Minimal.UseCases.ExecutePowerShell;
+using WebAPI.Minimal.UseCases.ScheduleJob;
 
 namespace WebAPI.Minimal.StartUp;
 
@@ -10,7 +10,7 @@ public static class EndpointsRegistryExtensions
     public static void RegisterWebApiEndpoints(this IEndpointRouteBuilder routes)
     {
         routes.AddExecutePowerShellEndpoint();
-        routes.AddCreateJobScheduleEndpoint();
+        routes.AddScheduleJobEndpoint();
     }
 
     private static IEndpointRouteBuilder AddExecutePowerShellEndpoint(this IEndpointRouteBuilder routes)
@@ -26,19 +26,19 @@ public static class EndpointsRegistryExtensions
         return routes;
     }
 
-    private static IEndpointRouteBuilder AddCreateJobScheduleEndpoint(this IEndpointRouteBuilder routes)
+    private static IEndpointRouteBuilder AddScheduleJobEndpoint(this IEndpointRouteBuilder routes)
     {
         var groupName = "/schedule";
         var group = routes.MapGroup(groupName);
 
         group
-            .MapPost("/new", CreateJobScheduleEndpoint.Execute)
-            .WithName("CreateJobScheduleEndpoint")
+            .MapPost("/new", ScheduleJobEndpoint.Execute)
+            .WithName("ScheduleJobEndpoint")
             .WithTags("scheduling")
-            .Produces<CreateJobScheduleResponse>((int)CreateJobScheduleResponse.SuccessCode)
-            .Produces<ApiError>((int)CreateJobScheduleResponse.ValidationErrorCode)
-            .Produces<ApiError>((int)CreateJobScheduleResponse.JobDoesNotExistErrorCode)
-            .Produces<ApiError>((int)CreateJobScheduleResponse.FailedToSaveScheduleErrorCode)
+            .Produces<ScheduleJobResponse>((int)ScheduleJobResponse.SuccessCode)
+            .Produces<ApiError>((int)ScheduleJobResponse.ValidationErrorCode)
+            .Produces<ApiError>((int)ScheduleJobResponse.JobDoesNotExistErrorCode)
+            .Produces<ApiError>((int)ScheduleJobResponse.FailedToSaveScheduleErrorCode)
             .Produces<ApiError>((int)HttpStatusCode.InternalServerError)
             ;
 

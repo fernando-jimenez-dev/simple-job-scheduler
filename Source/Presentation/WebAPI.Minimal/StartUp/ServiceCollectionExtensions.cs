@@ -1,9 +1,9 @@
-﻿using Application.UseCases.CreateJobSchedule;
-using Application.UseCases.CreateJobSchedule.Abstractions;
-using Application.UseCases.CreateJobSchedule.Infrastructure;
-using Application.UseCases.ExecutePowerShell;
+﻿using Application.UseCases.ExecutePowerShell;
 using Application.UseCases.ExecutePowerShell.Abstractions;
 using Application.UseCases.ExecutePowerShell.Infrastructure;
+using Application.UseCases.ScheduleJob;
+using Application.UseCases.ScheduleJob.Abstractions;
+using Application.UseCases.ScheduleJob.Infrastructure;
 using System.IO.Abstractions;
 
 namespace WebAPI.Minimal.StartUp;
@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddExecutePowerShellUseCase()
-            .AddCreateJobScheduleUseCase()
+            .AddScheduleJobUseCase()
             ;
     }
 
@@ -41,13 +41,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static IServiceCollection AddCreateJobScheduleUseCase(this IServiceCollection services)
+    private static IServiceCollection AddScheduleJobUseCase(this IServiceCollection services)
     {
         // Use Case
-        services.AddScoped<ICreateJobScheduleUseCase, CreateJobScheduleUseCase>();
+        services.AddScoped<IScheduleJobUseCase, ScheduleJobUseCase>();
 
         // Infrastructure
-        services.AddScoped<ICreateJobScheduleRepository, CreateJobScheduleInMemoryRepository>();
+        services.AddScoped<IScheduleJobRepository, ScheduleJobInMemoryRepository>();
 
         return services;
     }

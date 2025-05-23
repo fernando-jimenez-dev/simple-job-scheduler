@@ -1,16 +1,16 @@
 ﻿using Application.Shared.Errors;
-using Application.UseCases.CreateJobSchedule;
-using Application.UseCases.CreateJobSchedule.Errors;
+using Application.UseCases.ScheduleJob;
+using Application.UseCases.ScheduleJob.Errors;
 using OpenResult;
 using System.Net;
 using WebAPI.Minimal.Shared;
 
-namespace WebAPI.Minimal.UseCases.CreateJobSchedule;
+namespace WebAPI.Minimal.UseCases.ScheduleJob;
 
-public record CreateJobScheduleResponse
+public record ScheduleJobResponse
 {
     public bool IsSuccess { get; init; }
-    public CreateJobScheduleOutput? Data { get; init; }
+    public ScheduleJobOutput? Data { get; init; }
     public ApiError? Error { get; init; }
     public HttpStatusCode HttpStatusCode { get; init; }
     public int StatusCode => (int)HttpStatusCode;
@@ -20,7 +20,7 @@ public record CreateJobScheduleResponse
     public const HttpStatusCode JobDoesNotExistErrorCode = HttpStatusCode.NotFound;
     public const HttpStatusCode FailedToSaveScheduleErrorCode = HttpStatusCode.InternalServerError;
 
-    public CreateJobScheduleResponse(Result<CreateJobScheduleOutput> useCaseResult, CreateJobScheduleRequest request)
+    public ScheduleJobResponse(Result<ScheduleJobOutput> useCaseResult, ScheduleJobRequest request)
     {
         if (useCaseResult.IsSuccess)
         {
@@ -37,11 +37,11 @@ public record CreateJobScheduleResponse
         (HttpStatusCode, Error) = MapErrorToHttp(useCaseError, request);
     }
 
-    private static (HttpStatusCode, ApiError) MapErrorToHttp(Error useCaseError, CreateJobScheduleRequest request)
+    private static (HttpStatusCode, ApiError) MapErrorToHttp(Error useCaseError, ScheduleJobRequest request)
     {
         return useCaseError switch
         {
-            ValidationError<CreateJobScheduleInput> error => (
+            ValidationError<ScheduleJobInput> error => (
                 ValidationErrorCode,
                 ApiError.FromApplicationError(error, request)
                     .WithDetail("validationIssues", error.Issues)

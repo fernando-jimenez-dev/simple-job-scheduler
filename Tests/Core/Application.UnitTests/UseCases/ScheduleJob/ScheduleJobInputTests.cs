@@ -1,10 +1,10 @@
-﻿using Application.UseCases.CreateJobSchedule;
+﻿using Application.UseCases.ScheduleJob;
 using FluentValidation.Results;
 using Shouldly;
 
-namespace Application.UnitTests.UseCases.CreateJobSchedule;
+namespace Application.UnitTests.UseCases.ScheduleJob;
 
-public class CreateJobScheduleInputTests
+public class ScheduleJobInputTests
 {
     [Fact]
     public void ShouldSucceed_WithValidOneTimeSchedule_AndNoParameters()
@@ -12,7 +12,7 @@ public class CreateJobScheduleInputTests
         // Arrange
         var schedule = new OneTimeSchedule(DateTimeOffset.UtcNow.AddMinutes(10));
         var jobId = Guid.NewGuid();
-        var input = new CreateJobScheduleInput(schedule, jobId);
+        var input = new ScheduleJobInput(schedule, jobId);
 
         // Act
         var result = input.Validate();
@@ -28,7 +28,7 @@ public class CreateJobScheduleInputTests
         var schedule = new CronSchedule("0 12 * * 1-5"); // Noon every weekday
         var jobId = Guid.NewGuid();
         var parameters = "{\"foo\": 42}";
-        var input = new CreateJobScheduleInput(schedule, jobId, parameters);
+        var input = new ScheduleJobInput(schedule, jobId, parameters);
 
         // Act
         var result = input.Validate();
@@ -43,7 +43,7 @@ public class CreateJobScheduleInputTests
         // Arrange
         var schedule = new OneTimeSchedule(DateTimeOffset.UtcNow.AddMinutes(10));
         var jobId = Guid.Empty;
-        var input = new CreateJobScheduleInput(schedule, jobId);
+        var input = new ScheduleJobInput(schedule, jobId);
 
         // Act
         var result = input.Validate();
@@ -59,7 +59,7 @@ public class CreateJobScheduleInputTests
         // Arrange: OneTimeSchedule in the past
         var schedule = new OneTimeSchedule(DateTimeOffset.UtcNow.AddMinutes(-10));
         var jobId = Guid.NewGuid();
-        var input = new CreateJobScheduleInput(schedule, jobId);
+        var input = new ScheduleJobInput(schedule, jobId);
 
         // Act
         var result = input.Validate();
@@ -75,7 +75,7 @@ public class CreateJobScheduleInputTests
         // Arrange
         var schedule = new OneTimeSchedule(DateTimeOffset.UtcNow.AddMinutes(10));
         var jobId = Guid.NewGuid();
-        var input = new CreateJobScheduleInput(schedule, jobId, "{notJson}");
+        var input = new ScheduleJobInput(schedule, jobId, "{notJson}");
 
         // Act
         var result = input.Validate();
@@ -93,8 +93,8 @@ public class CreateJobScheduleInputTests
         var jobId = Guid.NewGuid();
 
         // Act/Assert
-        new CreateJobScheduleInput(schedule, jobId, null).Validate().IsValid.ShouldBeTrue();
-        new CreateJobScheduleInput(schedule, jobId, "").Validate().IsValid.ShouldBeTrue();
+        new ScheduleJobInput(schedule, jobId, null).Validate().IsValid.ShouldBeTrue();
+        new ScheduleJobInput(schedule, jobId, "").Validate().IsValid.ShouldBeTrue();
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class CreateJobScheduleInputTests
         // Arrange
         var schedule = new UnknownSchedule();
         var jobId = Guid.NewGuid();
-        var input = new CreateJobScheduleInput(schedule, jobId);
+        var input = new ScheduleJobInput(schedule, jobId);
 
         // Act
         var result = input.Validate();

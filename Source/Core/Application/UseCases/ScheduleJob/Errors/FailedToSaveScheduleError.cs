@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using OpenResult;
 
-namespace Application.UseCases.CreateJobSchedule.Errors;
+namespace Application.UseCases.ScheduleJob.Errors;
 
 public record FailedToSaveScheduleError : ApplicationError
 {
