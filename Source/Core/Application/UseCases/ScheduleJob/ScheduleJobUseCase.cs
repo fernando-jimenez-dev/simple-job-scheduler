@@ -1,10 +1,10 @@
 ﻿using Application.Shared;
 using Application.Shared.Errors;
-using Application.UseCases.CreateJobSchedule.Abstractions;
-using Application.UseCases.CreateJobSchedule.Errors;
+using Application.UseCases.ScheduleJob.Abstractions;
+using Application.UseCases.ScheduleJob.Errors;
 using OpenResult;
 
-namespace Application.UseCases.CreateJobSchedule;
+namespace Application.UseCases.ScheduleJob;
 
 /// <summary>
 /// 1. Schedule a One-Time Job Execution
@@ -24,16 +24,16 @@ namespace Application.UseCases.CreateJobSchedule;
 ///   . Mark it as pending and track its relevant metadata.
 /// 4. Acknowledge the request (e.g., with a tracking ID or status).
 /// </summary>
-public class CreateJobScheduleUseCase : ICreateJobScheduleUseCase
+public class ScheduleJobUseCase : IScheduleJobUseCase
 {
-    private readonly ICreateJobScheduleRepository _repository;
+    private readonly IScheduleJobRepository _repository;
 
-    public CreateJobScheduleUseCase(ICreateJobScheduleRepository repository)
+    public ScheduleJobUseCase(IScheduleJobRepository repository)
     {
         _repository = repository;
     }
 
-    public async Task<Result<CreateJobScheduleOutput>> Run(CreateJobScheduleInput input, CancellationToken cancellationToken = default)
+    public async Task<Result<ScheduleJobOutput>> Run(ScheduleJobInput input, CancellationToken cancellationToken = default)
     {
         // 2.1 Validate input
         var validationResult = input.Validate();
@@ -50,9 +50,9 @@ public class CreateJobScheduleUseCase : ICreateJobScheduleUseCase
             return Fail(FailedToSaveScheduleError.For(saveNewScheduleResult));
 
         var newScheduleId = saveNewScheduleResult.Value;
-        return Result.Success(new CreateJobScheduleOutput(newScheduleId));
+        return Result.Success(new ScheduleJobOutput(newScheduleId));
     }
 
-    private static Result<CreateJobScheduleOutput> Fail(ApplicationError error)
-        => Result<CreateJobScheduleOutput>.Failure(error);
+    private static Result<ScheduleJobOutput> Fail(ApplicationError error)
+        => Result<ScheduleJobOutput>.Failure(error);
 }

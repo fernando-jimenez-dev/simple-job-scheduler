@@ -1,14 +1,14 @@
-﻿using Application.UseCases.CreateJobSchedule.Abstractions;
+﻿using Application.UseCases.ScheduleJob.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebAPI.Minimal.UseCases.CreateJobSchedule;
+namespace WebAPI.Minimal.UseCases.ScheduleJob;
 
-public class CreateJobScheduleEndpoint
+public class ScheduleJobEndpoint
 {
     public static async Task<IResult> Execute(
-        [FromServices] ICreateJobScheduleUseCase useCase,
-        [FromServices] ILogger<CreateJobScheduleEndpoint> logger,
-        [FromBody] CreateJobScheduleRequest request,
+        [FromServices] IScheduleJobUseCase useCase,
+        [FromServices] ILogger<ScheduleJobEndpoint> logger,
+        [FromBody] ScheduleJobRequest request,
         CancellationToken cancellationToken
     )
     {
@@ -21,7 +21,7 @@ public class CreateJobScheduleEndpoint
         var input = request.ToInputOrDefault();
         var result = await useCase.Run(input, cancellationToken);
 
-        var response = new CreateJobScheduleResponse(result, request);
+        var response = new ScheduleJobResponse(result, request);
 
         if (response.IsSuccess)
             logger.LogInformation(

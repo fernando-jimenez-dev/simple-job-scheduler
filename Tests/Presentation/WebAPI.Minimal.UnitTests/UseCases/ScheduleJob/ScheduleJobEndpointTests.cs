@@ -1,8 +1,8 @@
 ﻿using Application.Shared;
 using Application.Shared.Errors;
-using Application.UseCases.CreateJobSchedule;
-using Application.UseCases.CreateJobSchedule.Abstractions;
-using Application.UseCases.CreateJobSchedule.Errors;
+using Application.UseCases.ScheduleJob;
+using Application.UseCases.ScheduleJob.Abstractions;
+using Application.UseCases.ScheduleJob.Errors;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
@@ -10,36 +10,36 @@ using NSubstitute;
 using OpenResult;
 using Shouldly;
 using System.Net;
-using WebAPI.Minimal.UseCases.CreateJobSchedule;
+using WebAPI.Minimal.UseCases.ScheduleJob;
 
-namespace WebAPI.Minimal.UnitTests.UseCases.CreateJobSchedule;
+namespace WebAPI.Minimal.UnitTests.UseCases.ScheduleJob;
 
-public class CreateJobScheduleEndpointTests
+public class ScheduleJobEndpointTests
 {
-    private readonly ICreateJobScheduleUseCase _useCase;
-    private readonly ILogger<CreateJobScheduleEndpoint> _logger;
+    private readonly IScheduleJobUseCase _useCase;
+    private readonly ILogger<ScheduleJobEndpoint> _logger;
 
-    public CreateJobScheduleEndpointTests()
+    public ScheduleJobEndpointTests()
     {
-        _useCase = Substitute.For<ICreateJobScheduleUseCase>();
-        _logger = Substitute.For<ILogger<CreateJobScheduleEndpoint>>();
+        _useCase = Substitute.For<IScheduleJobUseCase>();
+        _logger = Substitute.For<ILogger<ScheduleJobEndpoint>>();
     }
 
     [Theory]
     [MemberData(nameof(UseCaseResults))]
-    public async Task ShouldReturnJsonResponse_WithMappedResponseAndStatus(Result<CreateJobScheduleOutput> result)
+    public async Task ShouldReturnJsonResponse_WithMappedResponseAndStatus(Result<ScheduleJobOutput> result)
     {
-        var request = new CreateJobScheduleRequest(
+        var request = new ScheduleJobRequest(
             JobId: JobTypeRegistry.ExecutePowerShellType.Id,
             Schedule: new RequestSchedule(RequestSchedule.ScheduleType.OneTime, DateTimeOffset.UtcNow.AddMinutes(5).ToString("O")),
             Parameters: "{\"foo\":42}"
         );
-        _useCase.Run(Arg.Any<CreateJobScheduleInput>(), Arg.Any<CancellationToken>()).Returns(result);
+        _useCase.Run(Arg.Any<ScheduleJobInput>(), Arg.Any<CancellationToken>()).Returns(result);
 
-        var endpointResult = await CreateJobScheduleEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
+        var endpointResult = await ScheduleJobEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
 
-        var expectedResponse = new CreateJobScheduleResponse(result, request);
-        var json = endpointResult.ShouldBeOfType<JsonHttpResult<CreateJobScheduleResponse>>();
+        var expectedResponse = new ScheduleJobResponse(result, request);
+        var json = endpointResult.ShouldBeOfType<JsonHttpResult<ScheduleJobResponse>>();
         json.StatusCode.ShouldBe(expectedResponse.StatusCode);
         json.Value.ShouldBeEquivalentTo(expectedResponse);
     }
@@ -47,21 +47,21 @@ public class CreateJobScheduleEndpointTests
     [Fact]
     public async Task ShouldReturnJsonResponse_WhenUnknownErrorTypeIsReturned()
     {
-        var request = new CreateJobScheduleRequest(
+        var request = new ScheduleJobRequest(
             JobId: Guid.NewGuid(),
             Schedule: new RequestSchedule(RequestSchedule.ScheduleType.OneTime, DateTimeOffset.UtcNow.AddMinutes(5).ToString("O")),
             Parameters: "{\"foo\":42}"
         );
 
-        var unknownErrorResult = Result<CreateJobScheduleOutput>.Failure(
+        var unknownErrorResult = Result<ScheduleJobOutput>.Failure(
             new Error("Unknown error")
         );
-        _useCase.Run(Arg.Any<CreateJobScheduleInput>(), Arg.Any<CancellationToken>())
+        _useCase.Run(Arg.Any<ScheduleJobInput>(), Arg.Any<CancellationToken>())
             .Returns(unknownErrorResult);
 
-        var endpointResult = await CreateJobScheduleEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
+        var endpointResult = await ScheduleJobEndpoint.Execute(_useCase, _logger, request, CancellationToken.None);
 
-        var json = endpointResult.ShouldBeOfType<JsonHttpResult<CreateJobScheduleResponse>>();
+        var json = endpointResult.ShouldBeOfType<JsonHttpResult<ScheduleJobResponse>>();
         json.StatusCode.ShouldBe((int)HttpStatusCode.InternalServerError);
         json.Value.ShouldNotBeNull();
         json.Value.Error.ShouldNotBeNull();
@@ -74,32 +74,32 @@ public class CreateJobScheduleEndpointTests
     {
         yield return new object[]
         {
-            Result.Success(new CreateJobScheduleOutput(123))
+            Result.Success(new ScheduleJobOutput(123))
         };
         yield return new object[]
         {
-            Result<CreateJobScheduleOutput>.Failure(
-                new ValidationError<CreateJobScheduleInput>(
-                    new CreateJobScheduleInput(new OneTimeSchedule(DateTimeOffset.MinValue), Guid.NewGuid(), null),
+            Result<ScheduleJobOutput>.Failure(
+                new ValidationError<ScheduleJobInput>(
+                    new ScheduleJobInput(new OneTimeSchedule(DateTimeOffset.MinValue), Guid.NewGuid(), null),
                     new ValidationResult([new ValidationFailure("ScheduledAt", "ScheduledAt must be in the future")])
                 )
             )
         };
         yield return new object[]
         {
-            Result<CreateJobScheduleOutput>.Failure(
+            Result<ScheduleJobOutput>.Failure(
                 new JobDoesNotExistError(Guid.NewGuid())
             )
         };
         yield return new object[]
         {
-            Result <CreateJobScheduleOutput>.Failure(
+            Result <ScheduleJobOutput>.Failure(
                 new FailedToSaveScheduleError(Result<int>.Failure(new Error("Database unavailable")))
             )
         };
         yield return new object[]
         {
-            Result <CreateJobScheduleOutput>.Failure(
+            Result <ScheduleJobOutput>.Failure(
                 new ApplicationError("SomeError", "Some application-level error")
             )
         };
