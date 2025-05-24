@@ -1,5 +1,5 @@
-﻿using Application.UseCases.ExecutePowerShell.Abstractions;
-using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
+﻿using Application.JobsUseCases.ExecutePowerShell.Abstractions;
+using static Application.JobsUseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
 
 namespace Application.Shared;
 

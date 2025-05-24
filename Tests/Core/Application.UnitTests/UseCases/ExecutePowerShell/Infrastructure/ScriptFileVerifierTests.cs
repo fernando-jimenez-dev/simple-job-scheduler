@@ -1,9 +1,9 @@
-﻿using Application.UseCases.ExecutePowerShell.Infrastructure;
+﻿using Application.JobsUseCases.ExecutePowerShell.Infrastructure;
 using NSubstitute;
 using Shouldly;
 using System.IO.Abstractions;
 
-namespace Application.UnitTests.UseCases.ExecutePowerShell.Infrastructure;
+namespace Application.UnitTests.JobsUseCases.ExecutePowerShell.Infrastructure;
 
 public class ScriptFileVerifierTests
 {

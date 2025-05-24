@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using WebAPI.Minimal.Shared;
-using WebAPI.Minimal.UseCases.ExecutePowerShell;
-using WebAPI.Minimal.UseCases.ScheduleJob;
+using WebAPI.Minimal.JobsUseCases.ExecutePowerShell;
+using WebAPI.Minimal.SchedulingUseCases.ScheduleJob;
 
 namespace WebAPI.Minimal.StartUp;
 

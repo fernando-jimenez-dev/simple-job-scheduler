@@ -1,8 +1,8 @@
 ﻿using Application.Shared;
 using Application.Shared.Errors;
-using Application.UseCases.ScheduleJob;
-using Application.UseCases.ScheduleJob.Abstractions;
-using Application.UseCases.ScheduleJob.Errors;
+using Application.SchedulingUseCases.ScheduleJob;
+using Application.SchedulingUseCases.ScheduleJob.Abstractions;
+using Application.SchedulingUseCases.ScheduleJob.Errors;
 using NSubstitute;
 using OpenResult;
 using Shouldly;

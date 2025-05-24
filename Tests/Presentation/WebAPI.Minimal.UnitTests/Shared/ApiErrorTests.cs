@@ -1,8 +1,8 @@
-﻿using Application.UseCases.ExecutePowerShell.Errors;
+﻿using Application.JobsUseCases.ExecutePowerShell.Errors;
 using FluentValidation.Results;
 using Shouldly;
 using WebAPI.Minimal.Shared;
-using WebAPI.Minimal.UseCases.ExecutePowerShell;
+using WebAPI.Minimal.JobsUseCases.ExecutePowerShell;
 
 namespace WebAPI.Minimal.UnitTests.Shared;
 

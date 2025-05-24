@@ -1,9 +1,9 @@
-﻿using Application.UseCases.ExecutePowerShell;
-using Application.UseCases.ExecutePowerShell.Abstractions;
-using Application.UseCases.ExecutePowerShell.Infrastructure;
-using Application.UseCases.ScheduleJob;
-using Application.UseCases.ScheduleJob.Abstractions;
-using Application.UseCases.ScheduleJob.Infrastructure;
+﻿using Application.JobsUseCases.ExecutePowerShell;
+using Application.JobsUseCases.ExecutePowerShell.Abstractions;
+using Application.JobsUseCases.ExecutePowerShell.Infrastructure;
+using Application.SchedulingUseCases.ScheduleJob;
+using Application.SchedulingUseCases.ScheduleJob.Abstractions;
+using Application.SchedulingUseCases.ScheduleJob.Infrastructure;
 using System.IO.Abstractions;
 
 namespace WebAPI.Minimal.StartUp;

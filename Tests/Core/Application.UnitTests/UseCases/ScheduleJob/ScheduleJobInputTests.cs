@@ -1,4 +1,4 @@
-﻿using Application.UseCases.ScheduleJob;
+﻿using Application.SchedulingUseCases.ScheduleJob;
 using FluentValidation.Results;
 using Shouldly;
 

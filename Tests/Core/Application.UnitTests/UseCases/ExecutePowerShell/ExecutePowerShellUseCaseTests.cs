@@ -1,15 +1,15 @@
-﻿using Application.Shared.Errors;
-using Application.UseCases.ExecutePowerShell;
-using Application.UseCases.ExecutePowerShell.Abstractions;
-using Application.UseCases.ExecutePowerShell.Errors;
+﻿using Application.JobsUseCases.ExecutePowerShell;
+using Application.JobsUseCases.ExecutePowerShell.Abstractions;
+using Application.JobsUseCases.ExecutePowerShell.Errors;
+using Application.Shared.Errors;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
-using static Application.UseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
-using static Application.UseCases.ExecutePowerShell.Abstractions.IPowerShellExecutor;
+using static Application.JobsUseCases.ExecutePowerShell.Abstractions.IExecutePowerShellUseCase;
+using static Application.JobsUseCases.ExecutePowerShell.Abstractions.IPowerShellExecutor;
 
-namespace Application.UnitTests.UseCases.ExecutePowerShell;
+namespace Application.UnitTests.JobsUseCases.ExecutePowerShell;
 
 public class ExecutePowerShellUseCaseTests
 {
